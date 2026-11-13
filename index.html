@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Для моей любимой Алеси 💕</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
     <style>
         * {
             box-sizing: border-box;
@@ -57,6 +57,102 @@
             }
         }
 
+        /* ================= ИНТРО-ЭКРАН ================= */
+        .intro {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: linear-gradient(135deg, #ffdde1 0%, #ee9ca7 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            transition: opacity 0.7s ease, transform 0.7s ease, filter 0.7s ease;
+        }
+
+        .intro.hide {
+            opacity: 0;
+            transform: scale(1.15);
+            filter: blur(8px);
+            pointer-events: none;
+        }
+
+        .intro-heart {
+            font-size: 80px;
+            color: #ff6b81;
+            animation: heartbeat 1.5s infinite, introFloat 1s ease;
+            margin-bottom: 18px;
+            filter: drop-shadow(0 8px 20px rgba(255, 71, 87, 0.5));
+        }
+
+        @keyframes introFloat {
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .intro h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 36px;
+            color: #b33939;
+            margin-bottom: 12px;
+            text-align: center;
+            animation: introFloat 1s ease 0.15s both;
+        }
+
+        .intro p {
+            font-size: 16px;
+            color: #8c6267;
+            margin-bottom: 35px;
+            text-align: center;
+            line-height: 1.6;
+            animation: introFloat 1s ease 0.3s both;
+        }
+
+        /* === Большая кнопка «Продолжить» === */
+        .btn-continue {
+            position: relative;
+            background: linear-gradient(135deg, #ff6b81 0%, #ff4757 100%);
+            color: white;
+            border: none;
+            padding: 18px 50px;
+            font-size: 18px;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+            box-shadow: 0 8px 25px rgba(255, 71, 87, 0.5);
+            overflow: hidden;
+            animation: introFloat 1s ease 0.45s both, glowPulse 2.2s infinite 1.5s;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { box-shadow: 0 8px 25px rgba(255, 71, 87, 0.5); }
+            50%      { box-shadow: 0 12px 40px rgba(255, 71, 87, 0.85); }
+        }
+
+        .btn-continue:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 14px 38px rgba(255, 71, 87, 0.7);
+        }
+
+        .btn-continue:active { transform: translateY(1px) scale(0.98); }
+
+        .btn-continue::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+            animation: shimmer 2.6s infinite;
+        }
+
+        @keyframes shimmer { to { left: 100%; } }
+
+        /* ================= ОСНОВНАЯ КАРТОЧКА ================= */
         .card {
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(10px);
@@ -69,6 +165,15 @@
             box-shadow: 0 15px 35px rgba(238, 156, 167, 0.3);
             z-index: 2;
             position: relative;
+            opacity: 0;
+            transform: translateY(40px) scale(0.92);
+            transition: opacity 0.8s cubic-bezier(0.34, 1.56, 0.64, 1),
+                        transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .card.show {
+            opacity: 1;
+            transform: translateY(0) scale(1);
         }
 
         .heart-icon {
@@ -97,12 +202,13 @@
             line-height: 1.5;
         }
 
+        /* === Анимированная карточка-табличка с комплиментом (3D-flip) === */
         .reason-box {
             background: #fff0f3;
             border: 1px dashed #ffb6c1;
-            padding: 20px;
-            border-radius: 15px;
-            min-height: 90px;
+            padding: 24px 20px;
+            border-radius: 18px;
+            min-height: 130px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -110,7 +216,48 @@
             font-size: 16px;
             font-weight: 500;
             color: #7a4248;
-            transition: all 0.3s ease;
+            perspective: 1000px;
+            position: relative;
+            overflow: hidden;
+            transition: background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .reason-box::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.55) 50%, transparent 70%);
+            transform: translateX(-100%);
+            pointer-events: none;
+        }
+
+        .reason-box.flash::after {
+            animation: flashSweep 0.9s ease;
+        }
+
+        @keyframes flashSweep {
+            to { transform: translateX(100%); }
+        }
+
+        .reason-text {
+            transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1),
+                        opacity 0.4s ease,
+                        filter 0.4s ease;
+            transform-style: preserve-3d;
+            will-change: transform, opacity;
+        }
+
+        .reason-text.flipping {
+            transform: rotateY(180deg) scale(0.65);
+            opacity: 0;
+            filter: blur(8px);
+        }
+
+        /* === Кнопки === */
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            flex-direction: column;
         }
 
         .btn {
@@ -122,9 +269,23 @@
             font-weight: 600;
             border-radius: 50px;
             cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
             box-shadow: 0 5px 15px rgba(255, 71, 87, 0.4);
             transition: transform 0.2s, box-shadow 0.2s;
             width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+            transition: left 0.55s ease;
         }
 
         .btn:hover {
@@ -132,14 +293,60 @@
             box-shadow: 0 7px 20px rgba(255, 71, 87, 0.6);
         }
 
-        .btn:active {
-            transform: translateY(1px);
+        .btn:hover::before { left: 100%; }
+
+        .btn:active { transform: translateY(1px) scale(0.98); }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.75);
+            color: #b33939;
+            border: 1px solid #ffb6c1;
+            box-shadow: 0 4px 12px rgba(238, 156, 167, 0.25);
+        }
+
+        .btn-secondary::before {
+            background: linear-gradient(90deg, transparent, rgba(255, 182, 193, 0.45), transparent);
         }
 
         .footer-note {
             margin-top: 20px;
             font-size: 12px;
             color: #a6797e;
+        }
+
+        /* === Точки прогресса === */
+        .progress-dots {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            margin-top: 18px;
+            flex-wrap: wrap;
+            max-width: 280px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ffd1da;
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+
+        .dot.active {
+            background: #ff4757;
+            transform: scale(1.4);
+            box-shadow: 0 0 8px rgba(255, 71, 87, 0.6);
+        }
+
+        .paused-indicator {
+            font-size: 13px;
+            color: #a6797e;
+            margin-top: 10px;
+            min-height: 16px;
+            text-align: center;
+            transition: opacity 0.3s ease;
         }
     </style>
 </head>
@@ -148,17 +355,32 @@
     <!-- Фон с летящими сердечками -->
     <div class="bg-hearts" id="bgHearts"></div>
 
-    <div class="card">
+    <!-- ИНТРО-ЭКРАН -->
+    <div class="intro" id="intro">
+        <div class="intro-heart">❤️</div>
+        <h1>Алеся, это для тебя</h1>
+        <p>Я приготовил для тебя кое-что особенное...<br>Нажми, чтобы продолжить 💕</p>
+        <button class="btn-continue" onclick="startExperience()">Продолжить 💕</button>
+    </div>
+
+    <!-- ОСНОВНАЯ КАРТОЧКА -->
+    <div class="card" id="mainCard">
         <div class="heart-icon">❤️</div>
         <h1>Алеся, это для тебя</h1>
         <p class="subtitle">Я создал эту страничку просто чтобы напомнить, как сильно я тебя люблю. Нажми на кнопку ниже 👇</p>
-        
-        <div class="reason-box" id="reasonText">
-            Нажми на кнопку, чтобы узнать причину... ✨
+
+        <div class="reason-box" id="reasonBox">
+            <div class="reason-text" id="reasonText">Нажми на кнопку, чтобы узнать причину... ✨</div>
         </div>
 
-        <button class="btn" onclick="showReason()">Узнать причину 💕</button>
-        
+        <div class="btn-row">
+            <button class="btn" onclick="nextReason(true)">Следующая причина 💕</button>
+            <button class="btn btn-secondary" id="pauseBtn" onclick="togglePause()">⏸ Пауза автопоказа</button>
+        </div>
+
+        <div class="progress-dots" id="progressDots"></div>
+        <div class="paused-indicator" id="pausedIndicator"></div>
+
         <div class="footer-note">Сделано с бесконечной любовью для тебя</div>
     </div>
 
@@ -175,19 +397,101 @@
             "Просто потому, что ты есть в моей жизни, и это лучшее, что случалось ❤️"
         ];
 
-        function showReason() {
-            const reasonBox = document.getElementById('reasonText');
-            // Анимация смены текста
-            reasonBox.style.opacity = 0;
-            setTimeout(() => {
-                const randomIndex = Math.floor(Math.random() * reasons.length);
-                reasonBox.textContent = reasons[randomIndex];
-                reasonBox.style.opacity = 1;
-            }, 150);
+        const AUTO_INTERVAL = 3500; // мс между автоматическими сменами
+        let currentIdx = -1;
+        let autoTimer = null;
+        let isPaused = false;
+        let started = false;
+
+        // ---- Построить точки прогресса ----
+        function buildDots() {
+            const d = document.getElementById('progressDots');
+            d.innerHTML = '';
+            reasons.forEach((_, i) => {
+                const dot = document.createElement('span');
+                dot.className = 'dot';
+                d.appendChild(dot);
+            });
+        }
+        buildDots();
+
+        function updateDots() {
+            document.querySelectorAll('.dot').forEach((dot, i) => {
+                dot.classList.toggle('active', i === currentIdx);
+            });
         }
 
-        // Плавная анимация появления текста
-        document.getElementById('reasonText').style.transition = "opacity 0.2s ease";
+        // ---- Запуск опыта после «Продолжить» ----
+        function startExperience() {
+            if (started) return;
+            started = true;
+            const intro = document.getElementById('intro');
+            const card = document.getElementById('mainCard');
+            intro.classList.add('hide');
+            // плавно показываем карточку
+            setTimeout(() => {
+                intro.style.display = 'none';
+                card.classList.add('show');
+            }, 450);
+            // первый комплимент — чуть позже, чтобы карточка успела появиться
+            setTimeout(() => nextReason(false), 1100);
+            startAuto();
+        }
+
+        // ---- Смена причины с 3D-flip эффектом ----
+        function nextReason(manual) {
+            const el = document.getElementById('reasonText');
+            const box = document.getElementById('reasonBox');
+            el.classList.add('flipping');
+            setTimeout(() => {
+                let idx;
+                if (reasons.length > 1) {
+                    do { idx = Math.floor(Math.random() * reasons.length); }
+                    while (idx === currentIdx);
+                } else {
+                    idx = 0;
+                }
+                currentIdx = idx;
+                el.textContent = reasons[idx];
+                el.classList.remove('flipping');
+                // вспышка-блик по карточке
+                box.classList.remove('flash');
+                void box.offsetWidth; // форсируем reflow
+                box.classList.add('flash');
+                updateDots();
+            }, 400);
+
+            // ручной клик сбрасывает таймер автопоказа
+            if (manual && !isPaused) startAuto();
+        }
+
+        // ---- Автопоказ ----
+        function startAuto() {
+            stopAuto();
+            autoTimer = setInterval(() => {
+                if (!isPaused) nextReason(false);
+            }, AUTO_INTERVAL);
+        }
+
+        function stopAuto() {
+            if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
+        }
+
+        function togglePause() {
+            isPaused = !isPaused;
+            const btn = document.getElementById('pauseBtn');
+            const ind = document.getElementById('pausedIndicator');
+            if (isPaused) {
+                btn.textContent = '▶ Продолжить автопоказ';
+                ind.textContent = '⏸ автопоказ остановлен';
+            } else {
+                btn.textContent = '⏸ Пауза автопоказа';
+                ind.textContent = '▶ автопоказ запущен';
+                nextReason(false);
+                startAuto();
+                setTimeout(() => { ind.textContent = ''; }, 1800);
+            }
+        }
 
         // Генерация плавающих сердечек на фоне
         const bgHearts = document.getElementById('bgHearts');
